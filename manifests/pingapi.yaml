@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingapi
+spec:
+  selector:
+    app: pingapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingapi
+  labels:
+    app: pingapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingapi
+  template:
+    metadata:
+      labels:
+        app: pingapi
+    spec:
+      containers:
+      - name: pingapi
+        image: cpressland/ping:latest
+        command:
+        - gunicorn
+        - --workers=2
+        - --threads=2
+        - --error-logfile=-
+        - --access-logfile=-
+        - --bind=0.0.0.0:9000
+        - pingapi

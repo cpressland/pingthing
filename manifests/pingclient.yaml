@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingclient
+  labels:
+    app: pingclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingclient
+  template:
+    metadata:
+      labels:
+        app: pingclient
+    spec:
+      containers:
+      - name: pingclient
+        image: cpressland/ping:latest
+        command:
+        - python
+        - pingclient.py

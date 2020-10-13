@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingproxy
+spec:
+  selector:
+    app: pingproxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingproxy
+  labels:
+    app: pingproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingproxy
+  template:
+    metadata:
+      labels:
+        app: pingproxy
+    spec:
+      containers:
+      - name: pingproxy
+        image: cpressland/ping:latest
+        command:
+        - gunicorn
+        - --workers=2
+        - --threads=2
+        - --error-logfile=-
+        - --access-logfile=-
+        - --bind=0.0.0.0:9000
+        - pingproxy
